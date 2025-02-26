@@ -1,19 +1,18 @@
 package com.certifyhub.auth.Controller;
-import com.certifyhub.auth.model.User;
-import com.certifyhub.auth.service.UsersService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/auth")
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
 public class ContentController {
 
-    @Autowired
-    private UsersService userService;
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register_page"; // Returns register_page.html from templates
+    }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.registerUser(user));
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login_page"; // Returns login_page.html from templates
     }
 }

@@ -15,17 +15,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .formLogin(httpForm -> httpForm
+                .csrf(csrf -> csrf.disable()) // ❗ Disable CSRF for testing (not recommended for production)
+                .formLogin(form -> form
                         .loginPage("/login").permitAll()
+                        .defaultSuccessUrl("/", true) // Redirect to home after login
+                        .failureUrl("/login?error=true") // Redirect back on failure
                 )
-                .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/req/signup").permitAll()
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true")
+                        .permitAll()
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/register", "/login", "/req/signup", "/css/**").permitAll() // Allow public access
                         .anyRequest().authenticated()
                 )
                 .build();
     }
 
-    // ✅ Add PasswordEncoder Bean Here
+    // ✅ Password encoder for secure authentication
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
