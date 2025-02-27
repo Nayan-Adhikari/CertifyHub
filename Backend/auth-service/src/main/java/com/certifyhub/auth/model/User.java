@@ -1,36 +1,31 @@
 package com.certifyhub.auth.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Data
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String username;
     private String email;
-
     private String password;
-    private String fullName;
-    private String phone;
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -42,6 +37,14 @@ public class User {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -49,23 +52,4 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
 }

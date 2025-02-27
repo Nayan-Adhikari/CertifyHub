@@ -1,28 +1,37 @@
 package com.certifyhub.auth.service;
 
-import com.certifyhub.auth.model.User;
-import com.certifyhub.auth.model.Role; // ✅ Correct Enum Import
 import com.certifyhub.auth.repository.UserRepo;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
-public class UsersService {
+@AllArgsConstructor
+public class UsersService implements UserDetailsService{
 
     @Autowired
-    private UserRepo userRepository;
+    private  UserRepo repository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+        Optional<com.certifyhub.auth.model.User> user = repository.findByUsername(username);
 
-    public String registerUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return "Email already exists";
+        if(user.isPresent()){
+
+            var userObj = user.get();
+            return User.builder()
+                    .username(userObj.getUsername())
+                    .password(userObj.getPassword())
+                    .build();
+        }else{
+            throw  new UsernameNotFoundException(username);
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.USER); // ✅ Correct Enum Usage
-        userRepository.save(user);
-        return "User registered successfully!";
+        //throw  new UnsupportedOperationException("Unimplemented method 'loadUserByUsername' ");
     }
 }
