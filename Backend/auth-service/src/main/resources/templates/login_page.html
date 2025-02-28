@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymelef.org">
 <head>
     <meta charset="UTF-8">
     <title>Login Page</title>
@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="form">
-  <form>
+  <form method="post" action="/login" th:object="${loginRequest}">
     <h2>Login</h2>
     <div class="input-box">
       <i class="fa fa-user" aria-hidden="true"></i>

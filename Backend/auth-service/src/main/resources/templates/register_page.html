@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymelef.org">
 <head>
     <meta charset="UTF-8">
     <title>Register Page</title>
@@ -7,8 +7,8 @@
 </head>
 <body>
 <div class="form">
-  <form>
-    <h2>Login</h2>
+  <form method="post" action="/register" th:object="${registerRequest}">
+    <h2>Register</h2>
     <div class="input-box">
       <i class="fa fa-user" aria-hidden="true"></i>
       <input type="text" name="name" placeholder="Username" required>

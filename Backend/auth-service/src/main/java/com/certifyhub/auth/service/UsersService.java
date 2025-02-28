@@ -1,37 +1,41 @@
 package com.certifyhub.auth.service;
 
 import com.certifyhub.auth.repository.UserRepo;
-import lombok.AllArgsConstructor;
+import com.certifyhub.auth.model.User;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-public class UsersService implements UserDetailsService{
+public class UsersService{
 
     @Autowired
-    private  UserRepo repository;
+    private UserRepo userRepo;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        Optional<com.certifyhub.auth.model.User> user = repository.findByUsername(username);
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-        if(user.isPresent()){
-
-            var userObj = user.get();
-            return User.builder()
-                    .username(userObj.getUsername())
-                    .password(userObj.getPassword())
-                    .build();
-        }else{
-            throw  new UsernameNotFoundException(username);
+    @Transactional
+    public String registerUser (User user){
+        Optional<User> existingUser = userRepo.findByEmail(user.getEmail());
+        if(existingUser.isPresent()){
+            return "Email already exits";
         }
-        //throw  new UnsupportedOperationException("Unimplemented method 'loadUserByUsername' ");
+        else{
+            User userDetails = new User();
+            userDetails.setUsername(user.getUsername());
+            userDetails.setEmail(user.getEmail());
+            userDetails.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepo.save(userDetails);
+        }
+        return "User registered successfully!";
+    }
+
+    public boolean validateUser(String username, String password) {
+        Optional<User> user = userRepo.findByUsername(username);
+        return user.isPresent() && user.get().getPassword().equals(password);
     }
 }
